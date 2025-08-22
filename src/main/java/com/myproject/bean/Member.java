@@ -9,9 +9,7 @@ public class Member {
 
     @Override
     public String toString() {
-        return "\t이름 : " + name +
-                "\t성별 : " + gender +
-                "\t나이 : " + age;
+        return "이름 : " + name + "\t성별 : " + gender + "\t나이 : " + age;
     }
 
     public Member(String id, String password, String name, String gender, int age) {

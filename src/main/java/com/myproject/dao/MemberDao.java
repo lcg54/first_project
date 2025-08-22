@@ -49,8 +49,9 @@ public class MemberDao extends SuperDao{
     }
 
     public int signUp(Member newM) {
+        int res = 0;
+
         String sql = "insert into members (id, password, name, gender, age) values (?, ?, ?, ?, ?)";
-        int cnt = 0;
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
@@ -60,7 +61,7 @@ public class MemberDao extends SuperDao{
             pstmt.setString(4, newM.getGender());
             pstmt.setInt(5, newM.getAge());
 
-            cnt = pstmt.executeUpdate();
+            res = pstmt.executeUpdate();
             //conn.commit();
 
         } catch (SQLException e) {
@@ -69,13 +70,13 @@ public class MemberDao extends SuperDao{
             }
             throw new RuntimeException(e);
         }
-        return cnt;
+        return res;
     }
 
     public Member login(String id, String pw) {
         Member m = null;
 
-        String sql = "select * from boards where id = ?, password = ?";
+        String sql = "select * from members where id = ? and password = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);){
@@ -97,7 +98,7 @@ public class MemberDao extends SuperDao{
     public Member showMyInfo(String loggedInId) {
         Member m = null;
 
-        String sql = "select * from boards where id = ?";
+        String sql = "select * from members where id = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);){
@@ -118,13 +119,22 @@ public class MemberDao extends SuperDao{
     public int updatePw(String loggedInId, String pw) {
         int res = 0;
 
-        String sql = "update members set password = ? where id = ?";
+        String sql1 = "select * from members where id = ? and password = ?"; // 먼저 사용중이던 비번인지 체크하고
+        String sql2 = "update members set password = ? where id = ?"; // 아니라면 변경
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);){
-            pstmt.setString(2, loggedInId);
-            pstmt.setString(1, pw);
-            res = pstmt.executeUpdate();
+             PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
+            pstmt1.setString(1, loggedInId);
+            pstmt1.setString(2, pw);
+            ResultSet rs = pstmt1.executeQuery();
+
+            if (!rs.next()) { // 사용중이 아니면 변경하며 res = 1 부여, 없으면 그대로 0
+                try (PreparedStatement pstmt2 = conn.prepareStatement(sql2);) {
+                    pstmt2.setString(2, loggedInId);
+                    pstmt2.setString(1, pw);
+                    res = pstmt2.executeUpdate();
+                }
+            }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
