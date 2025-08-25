@@ -4,24 +4,26 @@ public class Usage {
     private String id;
     private String telecom;
     private String plan;
+    private double used_data = 0.00;
     private String grade = "normal";
     private int discount_rate = 0;
-    private int amount = 0;
+    private int amount;
 
     @Override
     public String toString() {
-        return "통신사 : " + telecom + "\t요금제 : " + plan + "\t등급 : " + grade
-                + "\t할인율 : " + discount_rate + "%\t지불하실 금액 : " + amount + "원";
+        return "가입 PLAN : " + telecom + " / " + plan + "\n멤버십 등급 : " + grade + "\n데이터 사용량 : " + used_data
+                + "GB\n이번 달에 지불하실 금액 : " + amount + "원";
     }
 
     public Usage() {
 
     }
 
-    public Usage(String id, String telecom, String plan, String grade, int discount_rate, int amount) {
+    public Usage(String id, String telecom, String plan, double used_data, String grade, int discount_rate, int amount) {
         this.id = id;
         this.telecom = telecom;
         this.plan = plan;
+        this.used_data = used_data;
         this.grade = grade;
         this.discount_rate = discount_rate;
         this.amount = amount;
@@ -49,6 +51,14 @@ public class Usage {
 
     public void setPlan(String plan) {
         this.plan = plan;
+    }
+
+    public double getUsed_data() {
+        return used_data;
+    }
+
+    public void setUsed_data(double used_data) {
+        this.used_data = used_data;
     }
 
     public String getGrade() {

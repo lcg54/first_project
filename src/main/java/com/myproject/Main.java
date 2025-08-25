@@ -27,7 +27,7 @@ public class Main {
                     case 1:
                         System.out.println("새 계정을 생성합니다.");
                         Member m = new Member(); Usage u = new Usage();
-                        // 세터(입력안내(+유효성검사))
+                        // 세터(입력메소드(+유효성검사메소드 내장))
                         m.setId(enterNewId(scan, manager)); u.setId(enterNewId(scan, manager));
                         m.setPassword(enterPw(scan, manager));
                         m.setName(enterName(scan, manager));
@@ -51,7 +51,7 @@ public class Main {
                                 System.out.println("메뉴를 선택해주세요. (숫자 입력)");
                                 System.out.println("[0: 종료, 1: 개인정보 조회, 2: 비밀번호 변경, 3: 요금제 변경, 4: 통신사 변경, 5: 회원탈퇴]");
                                 try {
-                                    boolean update;
+                                    boolean sub;
                                     int mainMenu = Integer.parseInt(scan.nextLine());
                                     switch (mainMenu) {
                                         case 0:
@@ -60,56 +60,63 @@ public class Main {
                                             break;
 
                                         case 1:
-                                            manager.callById(loggedInId);
+                                            System.out.println("회원 정보를 출력합니다.");
+                                            manager.showMyInfo(loggedInId);
+                                            System.out.println("\n세부 명세서를 조회하시겠습니까? (Y/N)");
+                                            sub = true;
+                                            while (sub) {
+                                                String yesOrNo = scan.nextLine();
+                                                sub = manager.showDetailInfo(yesOrNo, loggedInId);
+                                            }
                                             break;
 
                                         case 2:
-                                            update = true;
-                                            while (update) {
+                                            sub = true;
+                                            while (sub) {
                                                 System.out.print("변경할 ");
                                                 String newPw = enterPw(scan, manager);
                                                 // 변경 후 시작 루프로
                                                 if (manager.updatePw(loggedInId, newPw)) {
                                                     main = false;
-                                                    update = false;
+                                                    sub = false;
                                                 }
                                             }
                                             break;
 
                                         case 3:
-                                            update = true;
-                                            while (update) {
+                                            sub = true;
+                                            while (sub) {
                                                 System.out.print("변경할 ");
                                                 String newPlan = enterPlan(scan, manager);
                                                 // 변경 후 메인 루프로
                                                 if (manager.updatePlan(loggedInId, newPlan)) {
-                                                    update = false;
+                                                    sub = false;
                                                 }
                                             }
                                             break;
 
                                         case 4:
-                                            update = true;
-                                            while (update) {
+                                            sub = true;
+                                            while (sub) {
                                                 System.out.print("변경할 ");
                                                 String newTel = enterTel(scan, manager);
                                                 // 변경 후 메인 루프로
                                                 if(manager.updateTel(loggedInId, newTel)) {
-                                                    update = false;
+                                                    sub = false;
                                                 }
                                             }
                                             break;
 
                                         case 5:
                                             System.out.println("계정을 제거합니다.");
-                                            update = true;
-                                            while (update) {
+                                            sub = true;
+                                            while (sub) {
                                                 System.out.print("확인을 위해 다시 한 번 ");
                                                 String rePw = enterPw(scan, manager);
                                                 // 탈퇴 후 시작 루프로
                                                 if (manager.deleteOne(loggedInId, rePw)) {
                                                     main = false;
-                                                    update = false;
+                                                    sub = false;
                                                 }
                                             }
                                             break;
@@ -140,7 +147,8 @@ public class Main {
         while (check) {
             System.out.println("아이디를 입력해주세요. (3~6자 이내의 영문, 숫자)");
             id = scan.nextLine();
-            check = manager.checkNewId(id); // 유효성검사 : 통과하면 false (루프탈출)
+            // 유효성검사 : 통과하면 false (루프탈출)
+            check = manager.checkNewId(id);
         }
         return id;
     }

@@ -147,10 +147,10 @@ public class Manager {
         }
     }
 
-    public void callById(String loggedInId) {
+    public void showMyInfo(String loggedInId) {
         Member m = mdao.callById(loggedInId);
         Usage u = udao.callById(loggedInId);
-        System.out.print(m + "\t");
+        System.out.println(m);
         System.out.println(u);
     }
 
@@ -217,4 +217,25 @@ public class Manager {
         }
     }
 
+    public boolean showDetailInfo(String yesOrNo, String loggedInId) {
+        Usage u = udao.callById(loggedInId);
+        switch (yesOrNo) {
+            case "y", "Y":
+                System.out.println("요금제명 : " + u.getPlan());
+                System.out.println("데이터 제공량 : " + udao.dataOfPlan(loggedInId) + "GB");
+                System.out.println("데이터 사용량 : " + u.getUsed_data() + "GB");
+                System.out.println("잔여 데이터 : " + (udao.dataOfPlan(loggedInId) - u.getUsed_data()) + "GB");
+                System.out.println("할인율 : " + u.getDiscount_rate() + "% (" +
+                        "청소년/노인 할인 " + udao.calcAgeDiscount(loggedInId) + "% + " +
+                        "멤버십 등급 할인 " + udao.calcGradeDiscount(loggedInId) + "%)");
+                System.out.println("최종 납부할 금액 : " + udao.calcAmount(loggedInId) + "원");
+                break;
+            case "n", "N":
+                break;
+            default:
+                System.out.println("Y 또는 N을 입력해주세요.");
+                return true;
+        }
+        return false;
+    }
 }

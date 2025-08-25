@@ -19,6 +19,7 @@ public class UsageDao extends SuperDao{
             usage.setId(rs.getString("id"));
             usage.setTelecom(rs.getString("telecom"));
             usage.setPlan(rs.getString("plan"));
+            usage.setUsed_data(rs.getDouble("used_data"));
             usage.setGrade(rs.getString("grade"));
             usage.setDiscount_rate(rs.getInt("discount_rate"));
             usage.setAmount(rs.getInt("amount"));
@@ -29,7 +30,13 @@ public class UsageDao extends SuperDao{
         return usage;
     }
 
-    public int amountPlan(String loggedInId) {
+    public double dataOfPlan(String loggedInId) {
+        double dp = 0;
+        // 요금제별 데이터 제공량
+        return dp;
+    }
+
+    public int amountOfPlan(String loggedInId) {
         Usage u = this.callById(loggedInId);
         String plan = u.getPlan();
         int ap = 0;
@@ -43,16 +50,17 @@ public class UsageDao extends SuperDao{
         return ap;
     }
 
-    public int calcDiscount_rate(String loggedInId) {
+    public int calcAgeDiscount(String loggedInId) {
         MemberDao mdao = new MemberDao();
         Member m = mdao.callById(loggedInId);
         int age = m.getAge();
         int ageDiscount = 0;
 
-        if (age <= 19 || age >= 65) {
-            ageDiscount = 30;
-        }
+        if (age <= 19 || age >= 65) {ageDiscount = 30;}
+        return ageDiscount;
+    }
 
+    public int calcGradeDiscount(String loggedInId) {
         Usage u = this.callById(loggedInId);
         String grade = u.getGrade();
         int gradeDiscount = 0;
@@ -62,20 +70,46 @@ public class UsageDao extends SuperDao{
             case "vip": gradeDiscount = 10; break;
             case "vvip": gradeDiscount = 20; break;
         }
+        return gradeDiscount;
+    }
 
+    public int calcDiscount(String loggedInId) {
+        int ageDiscount = calcAgeDiscount(loggedInId);
+        int gradeDiscount = calcGradeDiscount(loggedInId);
         int discount_rate = ageDiscount + gradeDiscount;
         return discount_rate;
     }
 
     public int calcAmount(String loggedInId) {
-        int base = amountPlan(loggedInId);
-        int discount = calcDiscount_rate(loggedInId);
+        int base = amountOfPlan(loggedInId);
+        int discount = calcDiscount(loggedInId);
         int amount = (int)(base * (1 - discount / 100.0));
         return amount;
     }
-// SELECT u.plan, u.grade, m.age FROM usage u JOIN members m ON u.id = m.id WHERE u.id = ? 와 같이 join을 활용해도 되지만, 이러면 불러온 데이터를 저장하는 객체와 일치하는 필드를 가진 bean이 없으니 새 bean을 만들어야 함. 필드 구성이 바뀔 때마다 매번 만들어야 함. 굳이..?
 
 
+    public int signUp(Usage u) {
+        int res = 0;
+
+        String sql = "insert into usage (id, telecom, plan, used_data, grade, discount_rate, amount)" +
+                " values (?, ?, ?, 0.00, 'normal', ?, ?)";
+
+        try (Connection conn = super.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setString(1, u.getId());
+            pstmt.setString(2, u.getTelecom());
+            pstmt.setString(3, u.getPlan());
+            pstmt.setInt(6, calcDiscount(u.getId()));
+            pstmt.setInt(7, calcAmount(u.getId()));
+
+            res = pstmt.executeUpdate();
+            //conn.commit();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return res;
+    }
 
     public Usage callById(String loggedInId) {
         Usage u = null;
@@ -145,27 +179,6 @@ public class UsageDao extends SuperDao{
             }
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return res;
-    }
-
-    public int signUp(Usage u) {
-        int res = 0;
-
-        String sql = "insert into members (id, telecom, plan, grade, discount_rate, amount) values (?, ?, ?, 'normal', 0, ?)";
-
-        try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);) {
-            pstmt.setString(1, u.getId());
-            pstmt.setString(2, u.getTelecom());
-            pstmt.setString(3, u.getPlan());
-            pstmt.setInt(6, calcAmount(u.getId()));
-
-            res = pstmt.executeUpdate();
-            //conn.commit();
-
-        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return res;

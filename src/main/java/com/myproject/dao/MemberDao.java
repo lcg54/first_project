@@ -32,7 +32,7 @@ public class MemberDao extends SuperDao{
     public List<Member> callAll() {
         List<Member> list = new ArrayList<>();
 
-        String sql = "select * from members";
+        String sql = "select * from member";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -51,7 +51,7 @@ public class MemberDao extends SuperDao{
     public int signUp(Member newM) {
         int res = 0;
 
-        String sql = "insert into members (id, password, name, gender, age) values (?, ?, ?, ?, ?)";
+        String sql = "insert into member (id, password, name, gender, age) values (?, ?, ?, ?, ?)";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
@@ -73,7 +73,7 @@ public class MemberDao extends SuperDao{
     public Member signIn(String id, String pw) {
         Member m = null;
 
-        String sql = "select * from members where id = ? and password = ?";
+        String sql = "select * from member where id = ? and password = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);){
@@ -95,7 +95,7 @@ public class MemberDao extends SuperDao{
     public Member callById(String loggedInId) {
         Member m = null;
 
-        String sql = "select * from members where id = ?";
+        String sql = "select * from member where id = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);){
@@ -116,8 +116,8 @@ public class MemberDao extends SuperDao{
     public int updatePw(String loggedInId, String pw) {
         int res = 0;
 
-        String sql1 = "select * from members where id = ? and password = ?"; // 먼저 사용중이던 비번인지 체크하고
-        String sql2 = "update members set password = ? where id = ?"; // 아니라면 변경
+        String sql1 = "select * from member where id = ? and password = ?"; // 먼저 사용중이던 비번인지 체크하고
+        String sql2 = "update member set password = ? where id = ?"; // 아니라면 변경
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
@@ -142,7 +142,7 @@ public class MemberDao extends SuperDao{
     public int deleteOne(String loggedInId, String pw) {
         int res = 0;
 
-        String sql = "delete from members where id = ? and password = ?";
+        String sql = "delete from member where id = ? and password = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
