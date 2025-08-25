@@ -29,25 +29,6 @@ public class MemberDao extends SuperDao{
         return member;
     }
 
-    public List<Member> callAll() {
-        List<Member> list = new ArrayList<>();
-
-        String sql = "select * from member";
-
-        try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery();){
-            while (rs.next()) {
-                Member m = this.preMember(rs);
-                list.add(m);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
-
     public int signUp(Member newM) {
         int res = 0;
 
@@ -155,5 +136,4 @@ public class MemberDao extends SuperDao{
         }
         return res;
     }
-
 }

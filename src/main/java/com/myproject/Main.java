@@ -49,7 +49,7 @@ public class Main {
                             boolean main = true;
                             while (main) {
                                 System.out.println("메뉴를 선택해주세요. (숫자 입력)");
-                                System.out.println("[0: 종료, 1: 개인정보 조회, 2: 비밀번호 변경, 3: 요금제 변경, 4: 통신사 변경, 5: 회원탈퇴]");
+                                System.out.println("[0: 종료, 1: 내 정보, 2: 비밀번호 변경, 3: 요금제 변경, 4: 통신사 이동, 5: 회원탈퇴, 6: ]");
                                 try {
                                     boolean sub;
                                     int mainMenu = Integer.parseInt(scan.nextLine());
@@ -66,7 +66,7 @@ public class Main {
                                             sub = true;
                                             while (sub) {
                                                 String yesOrNo = scan.nextLine();
-                                                sub = manager.showDetailInfo(yesOrNo, loggedInId);
+                                                sub = manager.showMyDetailInfo(yesOrNo, loggedInId);
                                             }
                                             break;
 
@@ -98,7 +98,7 @@ public class Main {
                                         case 4:
                                             sub = true;
                                             while (sub) {
-                                                System.out.print("변경할 ");
+                                                System.out.print("이동할 ");
                                                 String newTel = enterTel(scan, manager);
                                                 // 변경 후 메인 루프로
                                                 if(manager.updateTel(loggedInId, newTel)) {
@@ -120,6 +120,10 @@ public class Main {
                                                 }
                                             }
                                             break;
+
+                                        case 6:
+                                            System.out.println("");
+
 
                                         default: System.out.println("지정된 숫자 내에서 입력해주세요.");
                                     }
@@ -150,7 +154,12 @@ public class Main {
             // 유효성검사 : 통과하면 false (루프탈출)
             check = manager.checkNewId(id);
         }
+        System.out.println("사용 가능한 아이디입니다." +
+                "\n아이디는 최초 설정 후 변경이 불가능합니다. 정말 " + id + "(으)로 결정하시겠습니까?");
+        //if (y)
         return id;
+        //else if (n)
+        //다시 와일문
     }
 
     private static String enterId(Scanner scan, Manager manager) {

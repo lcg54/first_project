@@ -7,12 +7,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UsageDao extends SuperDao{
+public class UsageDao extends SuperDao {
     public UsageDao() {
     }
 
-    private Usage preUsage(ResultSet rs){
+    private Usage preUsage(ResultSet rs) {
         Usage usage = null;
         try {
             usage = new Usage();
@@ -42,10 +44,18 @@ public class UsageDao extends SuperDao{
         int ap = 0;
 
         switch (plan) {
-            case "5G 프리미엄": ap = 89000; break;
-            case "5G 스탠다드": ap = 55000; break;
-            case "LTE 무제한": ap = 69000; break;
-            case "LTE 라이트": ap = 33000; break;
+            case "5G 프리미엄":
+                ap = 89000;
+                break;
+            case "5G 스탠다드":
+                ap = 55000;
+                break;
+            case "LTE 무제한":
+                ap = 69000;
+                break;
+            case "LTE 라이트":
+                ap = 33000;
+                break;
         }
         return ap;
     }
@@ -56,7 +66,9 @@ public class UsageDao extends SuperDao{
         int age = m.getAge();
         int ageDiscount = 0;
 
-        if (age <= 19 || age >= 65) {ageDiscount = 30;}
+        if (age <= 19 || age >= 65) {
+            ageDiscount = 30;
+        }
         return ageDiscount;
     }
 
@@ -66,9 +78,15 @@ public class UsageDao extends SuperDao{
         int gradeDiscount = 0;
 
         switch (grade) {
-            case "normal": gradeDiscount = 0; break;
-            case "vip": gradeDiscount = 10; break;
-            case "vvip": gradeDiscount = 20; break;
+            case "normal":
+                gradeDiscount = 0;
+                break;
+            case "vip":
+                gradeDiscount = 10;
+                break;
+            case "vvip":
+                gradeDiscount = 20;
+                break;
         }
         return gradeDiscount;
     }
@@ -83,7 +101,7 @@ public class UsageDao extends SuperDao{
     public int calcAmount(String loggedInId) {
         int base = amountOfPlan(loggedInId);
         int discount = calcDiscount(loggedInId);
-        int amount = (int)(base * (1 - discount / 100.0));
+        int amount = (int) (base * (1 - discount / 100.0));
         return amount;
     }
 
@@ -117,7 +135,7 @@ public class UsageDao extends SuperDao{
         String sql = "select * from usage where id = ?";
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);){
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, loggedInId);
 
             try (ResultSet rs = pstmt.executeQuery();) {
@@ -139,7 +157,7 @@ public class UsageDao extends SuperDao{
         String sql2 = "update usage set plan = ? where id = ?";
 
         try (Connection conn = super.getConnection();
-            PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
+             PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
             pstmt1.setString(1, loggedInId);
             pstmt1.setString(2, plan);
             ResultSet rs = pstmt1.executeQuery();
@@ -199,5 +217,4 @@ public class UsageDao extends SuperDao{
         }
         return res;
     }
-
 }

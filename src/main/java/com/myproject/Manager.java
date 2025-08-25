@@ -154,6 +154,28 @@ public class Manager {
         System.out.println(u);
     }
 
+    public boolean showMyDetailInfo(String yesOrNo, String loggedInId) {
+        Usage u = udao.callById(loggedInId);
+        switch (yesOrNo) {
+            case "y", "Y":
+                System.out.println("요금제명 : " + u.getPlan());
+                System.out.println("데이터 제공량 : " + udao.dataOfPlan(loggedInId) + "GB");
+                System.out.println("데이터 사용량 : " + u.getUsed_data() + "GB");
+                System.out.println("잔여 데이터 : " + (udao.dataOfPlan(loggedInId) - u.getUsed_data()) + "GB");
+                System.out.println("할인율 : " + u.getDiscount_rate() + "% (" +
+                        "청소년/노인 할인 " + udao.calcAgeDiscount(loggedInId) + "% + " +
+                        "멤버십 등급 할인 " + udao.calcGradeDiscount(loggedInId) + "%)");
+                System.out.println("최종 납부할 금액 : " + udao.calcAmount(loggedInId) + "원");
+                break;
+            case "n", "N":
+                break;
+            default:
+                System.out.println("Y 또는 N을 입력해주세요.");
+                return true;
+        }
+        return false;
+    }
+
     public boolean updatePw(String loggedInId, String pw) {
         int res = mdao.updatePw(loggedInId, pw);
         if (res > 0) {
@@ -199,43 +221,5 @@ public class Manager {
             System.out.println("회원 탈퇴에 실패하였습니다. 다시 시도해 주세요.");
             return false;
         }
-    }
-
-    public void callAll() {
-        List<Member> list = mdao.callAll();
-        if (!list.isEmpty()){
-            for (Member m:list){
-                String id = m.getId();
-                //String password = m.getPassword();
-                String name = m.getName();
-                String gender = m.getGender();
-                int age = m.getAge();
-                System.out.println("ID : " + id + "\t비밀번호 : *******" + "\t이름 : " + name + "\t성별 : " + gender + "\t나이 : " + age);
-            }
-        }else{
-            System.out.println("회원이 존재하지 않습니다.");
-        }
-    }
-
-    public boolean showDetailInfo(String yesOrNo, String loggedInId) {
-        Usage u = udao.callById(loggedInId);
-        switch (yesOrNo) {
-            case "y", "Y":
-                System.out.println("요금제명 : " + u.getPlan());
-                System.out.println("데이터 제공량 : " + udao.dataOfPlan(loggedInId) + "GB");
-                System.out.println("데이터 사용량 : " + u.getUsed_data() + "GB");
-                System.out.println("잔여 데이터 : " + (udao.dataOfPlan(loggedInId) - u.getUsed_data()) + "GB");
-                System.out.println("할인율 : " + u.getDiscount_rate() + "% (" +
-                        "청소년/노인 할인 " + udao.calcAgeDiscount(loggedInId) + "% + " +
-                        "멤버십 등급 할인 " + udao.calcGradeDiscount(loggedInId) + "%)");
-                System.out.println("최종 납부할 금액 : " + udao.calcAmount(loggedInId) + "원");
-                break;
-            case "n", "N":
-                break;
-            default:
-                System.out.println("Y 또는 N을 입력해주세요.");
-                return true;
-        }
-        return false;
     }
 }
