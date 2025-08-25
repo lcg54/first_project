@@ -4,9 +4,9 @@ public class Usage {
     private String id;
     private String telecom;
     private String plan;
-    private String grade;
-    private int discount_rate;
-    private int amount;
+    private String grade = "normal";
+    private int discount_rate = 0;
+    private int amount = 0;
 
     @Override
     public String toString() {

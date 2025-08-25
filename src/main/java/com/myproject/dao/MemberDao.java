@@ -29,7 +29,7 @@ public class MemberDao extends SuperDao{
         return member;
     }
 
-    public List<Member> showAll() {
+    public List<Member> callAll() {
         List<Member> list = new ArrayList<>();
 
         String sql = "select * from members";
@@ -65,15 +65,12 @@ public class MemberDao extends SuperDao{
             //conn.commit();
 
         } catch (SQLException e) {
-            if ("23000".equals(e.getSQLState())) { // primary key(=id)가 중복되는 경우 SQLException 발생
-                System.out.println("이미 존재하는 ID입니다.");
-            }
             throw new RuntimeException(e);
         }
         return res;
     }
 
-    public Member login(String id, String pw) {
+    public Member signIn(String id, String pw) {
         Member m = null;
 
         String sql = "select * from members where id = ? and password = ?";
@@ -95,7 +92,7 @@ public class MemberDao extends SuperDao{
         return m;
     }
 
-    public Member showMyInfo(String loggedInId) {
+    public Member callById(String loggedInId) {
         Member m = null;
 
         String sql = "select * from members where id = ?";
@@ -141,4 +138,22 @@ public class MemberDao extends SuperDao{
         }
         return res;
     }
+
+    public int deleteOne(String loggedInId, String pw) {
+        int res = 0;
+
+        String sql = "delete from members where id = ? and password = ?";
+
+        try (Connection conn = super.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, loggedInId);
+            pstmt.setString(2, pw);
+            res = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return res;
+    }
+
 }

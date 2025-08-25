@@ -16,8 +16,193 @@ public class Manager {
         this.udao = new UsageDao();
     }
 
-    public void showAll() {
-        List<Member> list = mdao.showAll();
+    public boolean checkId(String id) {
+        Member m = mdao.callById(id);
+        if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
+            System.out.println("입력 조건을 확인해주세요.");
+            return true;
+        } else if (m == null) {
+            System.out.println("존재하지 않는 아이디입니다.");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkNewId(String id) {
+        Member m = mdao.callById(id);
+        if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
+            System.out.println("입력 조건을 확인해주세요.");
+            return true;
+        } else if (m != null) {
+            System.out.println("이미 존재하는 아이디입니다.");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkPw(String pw) {
+        if (!pw.matches("^[a-zA-Z0-9]{7,15}$")) {
+            System.out.println("입력 조건을 확인해주세요.");
+            return true;
+        }
+        if (!pw.matches(".*[a-zA-Z].*")) {
+            System.out.println("비밀번호에 영문이 한 글자 이상 포함되어야 합니다.");
+            return true;
+        }
+        if (!pw.matches(".*[0-9].*")) {
+            System.out.println("비밀번호에 숫자가 하나 이상 포함되어야 합니다.");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkName(String name) {
+        if (name.isBlank()) {
+            System.out.println("이름은 반드시 입력해야 합니다.");
+            return true;
+        } else if (name.length() > 10) {
+            System.out.println("올바른 이름을 입력해주세요. (1~10자)");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkGen(String gen) {
+        switch (gen) {
+            case "1", "m", "M", "male", "Male", "남", "남자", "남성", "2", "f", "F", "female", "Female", "여", "여자", "여성" :
+                return false;
+            default:
+                System.out.println("올바른 성별을 입력해주세요.");
+                return true;
+        }
+    }
+
+    public boolean checkAge(String age) {
+        try {
+            int a = Integer.parseInt(age);
+            if (a < 12) {
+                System.out.println("12세 미만은 가입이 불가능합니다.");
+                return true;
+            } else if (a > 120) {
+                System.out.println("올바른 나이를 입력해주세요. (최대 120세)");
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("숫자로 입력해주세요.");
+            return true;
+        }
+    }
+
+    public boolean checkTel(String tel) {
+        try {
+            int a = Integer.parseInt(tel);
+            switch (a) {
+                case 1, 2, 3: return false;
+                default:
+                    System.out.println("지정된 숫자 내에서 입력해주세요.");
+                    return true;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("숫자로 입력해주세요.");
+            return true;
+        }
+    }
+
+    public boolean checkPlan(String plan) {
+        try {
+            int a = Integer.parseInt(plan);
+            switch (a) {
+                case 1, 2, 3, 4: return false;
+                default:
+                    System.out.println("지정된 숫자 내에서 입력해주세요.");
+                    return true;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("숫자로 입력해주세요.");
+            return true;
+        }
+    }
+
+
+
+    public void signUp(Member m, Usage u) {
+        if (mdao.signUp(m) > 0 && udao.signUp(u) > 0) {
+            System.out.println("\'" + m.getId() + "\' 님의 회원가입이 완료되었습니다.");
+            System.out.println("다시 로그인해주세요.");
+        } else {
+            System.out.println("회원가입에 실패하였습니다. 다시 시도해 주세요.");
+        }
+    }
+
+    public boolean SignIn(String id, String pw) {
+        Member m = mdao.signIn(id, pw);
+        if (m != null){
+            System.out.println(m.getName() + "님, 환영합니다!");
+            return true;
+        } else {
+            System.out.println("비밀번호가 일치하지 않습니다.");
+            return false;
+        }
+    }
+
+    public void callById(String loggedInId) {
+        Member m = mdao.callById(loggedInId);
+        Usage u = udao.callById(loggedInId);
+        System.out.print(m + "\t");
+        System.out.println(u);
+    }
+
+    public boolean updatePw(String loggedInId, String pw) {
+        int res = mdao.updatePw(loggedInId, pw);
+        if (res > 0) {
+            System.out.println("비밀번호를 변경하였습니다.");
+            System.out.println("다시 로그인해 주세요. 시작 메뉴로 이동합니다.");
+            return true;
+        } else {
+            System.out.println("이미 사용중이던 비밀번호와 일치합니다.");
+            return false;
+        }
+    }
+
+    public boolean updatePlan(String loggedInId, String plan) {
+        int res = udao.updatePlan(loggedInId, plan);
+        int amount = udao.calcAmount(loggedInId);
+        if (res > 0) {
+            System.out.println("요금제를 변경하였습니다.");
+            System.out.println("익월부터 " + amount + "원의 요금이 부과됩니다.");
+            return true;
+        } else {
+            System.out.println("이미 해당 요금제를 사용중입니다.");
+            return false;
+        }
+    }
+
+    public boolean updateTel(String loggedInId, String tel) {
+        int res = udao.updateTelecom(loggedInId, tel);
+        if (res > 0) {
+            System.out.println("통신사를 이동하였습니다.");
+            return true;
+        } else {
+            System.out.println("이미 해당 통신사를 사용중입니다.");
+            return false;
+        }
+    }
+
+    public boolean deleteOne(String loggedInId, String outPw) {
+        if (mdao.deleteOne(loggedInId, outPw) > 0 && udao.deleteOne(loggedInId) > 0) {
+            System.out.println(loggedInId + "님의 회원 탈퇴가 완료되었습니다.");
+            System.out.println("로그인 화면으로 이동합니다.");
+            return true;
+        } else {
+            System.out.println("회원 탈퇴에 실패하였습니다. 다시 시도해 주세요.");
+            return false;
+        }
+    }
+
+    public void callAll() {
+        List<Member> list = mdao.callAll();
         if (!list.isEmpty()){
             for (Member m:list){
                 String id = m.getId();
@@ -32,73 +217,4 @@ public class Manager {
         }
     }
 
-    public void signUp(Member m, Usage u) {
-        if (mdao.signUp(m) > 0 && udao.signUp(u) > 0) {
-            System.out.println("\'" + m.getId() + "\' 님의 회원가입이 완료되었습니다.");
-            System.out.println("다시 로그인해 주세요.");
-        } else {
-            System.out.println("회원가입에 실패하였습니다. 입력값을 확인해 주세요.");
-        }
-    }
-
-    public int login(String id, String pw) {
-        int a = 0;
-        Member m = mdao.login(id, pw);
-        if (m != null){
-            System.out.println(m.getName() + "님, 환영합니다!");
-            a = 1;
-        } else {
-            System.out.println("아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-        return a;
-    }
-
-    public void showMyInfo(String loggedInId) {
-        Member m = mdao.showMyInfo(loggedInId);
-        Usage u = udao.showMyInfo(loggedInId);
-        System.out.print(m + "\t");
-        System.out.println(u);
-    }
-
-    public void updatePw(String loggedInId, String pw) {
-        int res = mdao.updatePw(loggedInId, pw);
-        if (res > 0) {
-            System.out.println("비밀번호를 변경하였습니다.");
-            System.out.println("다시 로그인해 주세요.");
-        } else {
-            System.out.println("이미 사용중이던 비밀번호와 일치합니다.");
-        }
-    }
-
-    public void updatePlan(String loggedInId, String plan) {
-        int res = udao.updatePlan(loggedInId, plan);
-        int amount = udao.calcAmount(plan);
-        if (res > 0) {
-            System.out.println("요금제를 변경하였습니다.");
-            System.out.println("익월부터 " + amount + "원의 요금이 부과됩니다.");
-        } else {
-            System.out.println("이미 해당 요금제를 사용중입니다.");
-        }
-    }
-
-
-    public void updateTelecom(String loggedInId, String tel) {
-        int res = udao.updateTelecom(loggedInId, tel);
-        if (res > 0) {
-            System.out.println("통신사를 이동하였습니다.");
-        } else {
-            System.out.println("이미 해당 통신사를 사용중입니다.");
-        }
-    }
-
-
-    public void signOut(String loggedInId, String outPw) {
-        if (mdao.signOut(loggedInId, outPw) > 0) {
-            udao.signOut(loggedInId);
-            System.out.println(loggedInId + "님의 회원 탈퇴가 완료되었습니다.");
-            System.out.println("로그인 화면으로 이동합니다.");
-        } else {
-            System.out.println("회원가입에 실패하였습니다. 입력값을 확인해 주세요.");
-        }
-    }
 }
