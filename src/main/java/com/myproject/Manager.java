@@ -98,7 +98,8 @@ public class Manager {
         try {
             int a = Integer.parseInt(tel);
             switch (a) {
-                case 1, 2, 3: return false;
+                case 1, 2, 3:
+                    return false;
                 default:
                     System.out.println("지정된 숫자 내에서 입력해주세요.");
                     return true;
@@ -113,7 +114,8 @@ public class Manager {
         try {
             int a = Integer.parseInt(plan);
             switch (a) {
-                case 1, 2, 3, 4: return false;
+                case 1, 2, 3, 4:
+                    return false;
                 default:
                     System.out.println("지정된 숫자 내에서 입력해주세요.");
                     return true;

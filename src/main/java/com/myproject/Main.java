@@ -250,12 +250,8 @@ public class Main {
             check = manager.checkGen(gen);
         }
         switch (gen) {
-            case "1", "m", "M", "male", "Male", "남", "남자", "남성":
-                gen = "M";
-                break;
-            case "2", "f", "F", "female", "Female", "여", "여자", "여성":
-                gen = "F";
-                break;
+            case "1", "m", "M", "male", "Male", "남", "남자", "남성": gen = "M"; break;
+            case "2", "f", "F", "female", "Female", "여", "여자", "여성": gen = "F"; break;
         }
         return gen;
     }
@@ -281,15 +277,9 @@ public class Main {
             check = manager.checkTel(tel);
         }
         switch (tel) {
-            case "1":
-                tel = "SK";
-                break;
-            case "2":
-                tel = "KT";
-                break;
-            case "3":
-                tel = "LG";
-                break;
+            case "1": tel = "SK"; break;
+            case "2": tel = "KT"; break;
+            case "3": tel = "LG"; break;
         }
         return tel;
     }
@@ -304,18 +294,10 @@ public class Main {
             check = manager.checkPlan(plan);
         }
         switch (plan) {
-            case "1":
-                plan = "5G 프리미엄";
-                break;
-            case "2":
-                plan = "5G 스탠다드";
-                break;
-            case "3":
-                plan = "LTE 무제한";
-                break;
-            case "4":
-                plan = "LTE 라이트";
-                break;
+            case "1": plan = "5G 프리미엄"; break;
+            case "2": plan = "5G 스탠다드"; break;
+            case "3": plan = "LTE 무제한"; break;
+            case "4": plan = "LTE 라이트"; break;
         }
         return plan;
     }
