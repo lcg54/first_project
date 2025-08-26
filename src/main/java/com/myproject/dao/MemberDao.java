@@ -43,7 +43,7 @@ public class MemberDao extends SuperDao{
             pstmt.setInt(5, newM.getAge());
 
             res = pstmt.executeUpdate();
-            //conn.commit();
+            conn.commit();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -111,6 +111,7 @@ public class MemberDao extends SuperDao{
                     pstmt2.setString(2, loggedInId);
                     pstmt2.setString(1, pw);
                     res = pstmt2.executeUpdate();
+                    conn.commit();
                 }
             }
 
@@ -130,6 +131,7 @@ public class MemberDao extends SuperDao{
             pstmt.setString(1, loggedInId);
             pstmt.setString(2, pw);
             res = pstmt.executeUpdate();
+            conn.commit();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
