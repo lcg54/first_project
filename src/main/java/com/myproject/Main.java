@@ -30,7 +30,7 @@ public class Main {
                         Usage u = new Usage();
                         boolean signUp = false;
                         while (!signUp) {
-                            // 세터(입력메소드(+유효성검사메소드 내장))
+                            // 세터(입력메소드(+유효성검사메소드))
                             m.setId(enterNewId(scan, mng));
                             u.setId(enterNewId(scan, mng));
                             m.setPassword(enterPw(scan, mng));
