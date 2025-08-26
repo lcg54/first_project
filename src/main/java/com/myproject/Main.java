@@ -59,7 +59,7 @@ public class Main {
                         // 메인 루프 : 로그인 시 진입
                         boolean main = true;
                         while (main) {
-                            System.out.println("메뉴를 선택해주세요. (숫자 입력)");
+                            System.out.println("\n메뉴를 선택해주세요. (숫자 입력)");
                             System.out.println("[0: 종료, 1: 내 정보, 2: 비밀번호 변경, 3: 요금제 변경, 4: 통신사 이동, 5: 회원탈퇴, 6: 로그아웃]");
                             try {
                                 boolean act;

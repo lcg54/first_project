@@ -1,23 +1,27 @@
 package com.myproject.bean;
 
+import java.time.LocalDate;
+
 public class Member {
     private String id;
     private String password;
     private String name;
     private String gender;
     private int age;
+    private LocalDate joinDate;
 
     @Override
     public String toString() {
-        return name + "(" + age + "/" + gender + ")";
+        return name + "(" + age + "/" + gender + ")" + "\n가입일 : " + joinDate;
     }
 
-    public Member(String id, String password, String name, String gender, int age) {
+    public Member(String id, String password, String name, String gender, int age, LocalDate joinDate) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.gender = gender;
         this.age = age;
+        this.joinDate = joinDate;
     }
 
     public Member() {
@@ -62,5 +66,13 @@ public class Member {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public LocalDate getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
     }
 }

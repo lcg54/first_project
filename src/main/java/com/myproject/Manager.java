@@ -159,6 +159,7 @@ public class Manager {
     }
 
     public boolean showMyDetailInfo(String yesOrNo, String loggedInId) {
+        Member m = mdao.callById(loggedInId);
         Usage u = udao.callById(loggedInId);
         switch (yesOrNo) {
             case "y", "Y":
@@ -166,9 +167,9 @@ public class Manager {
                 System.out.println("데이터 제공량 : " + udao.dataOfPlan(loggedInId) + "GB");
                 System.out.println("데이터 사용량 : " + u.getUsedData() + "GB");
                 System.out.println("잔여 데이터 : " + (udao.dataOfPlan(loggedInId) - u.getUsedData()) + "GB");
-                System.out.println("할인율 : " + u.getDiscountRate() + "% (" +
-                        "청소년/노인 할인 " + udao.calcAgeDiscount(loggedInId) + "% + " +
-                        "멤버십 등급 할인 " + udao.calcGradeDiscount(loggedInId) + "%)");
+                System.out.println("할인율 : " + u.getDiscountRate() + "%");
+                System.out.println("청소년/노인 할인 : [" + m.getAge() + "]세 - " + udao.calcAgeDiscount(loggedInId) + "% + " +
+                        "멤버십 등급 할인 : [" + udao. calcGrade(loggedInId) + "] - " + udao.calcGradeDiscount(loggedInId) + "%)");
                 System.out.println("최종 납부할 금액 : " + udao.calcAmount(loggedInId) + "원");
                 break;
             case "n", "N":

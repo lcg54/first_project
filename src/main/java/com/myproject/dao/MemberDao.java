@@ -2,12 +2,8 @@ package com.myproject.dao;
 
 import com.myproject.bean.Member;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.time.LocalDate;
 
 public class MemberDao extends SuperDao{
     public MemberDao() {
@@ -22,6 +18,7 @@ public class MemberDao extends SuperDao{
             member.setName(rs.getString("name"));
             member.setGender(rs.getString("gender"));
             member.setAge(rs.getInt("age"));
+            member.setJoinDate(rs.getDate("join_date").toLocalDate());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -29,18 +26,19 @@ public class MemberDao extends SuperDao{
         return member;
     }
 
-    public int signUp(Member newM) {
+    public int signUp(Member m) {
         int res = 0;
 
-        String sql = "insert into member (id, password, name, gender, age) values (?, ?, ?, ?, ?)";
+        String sql = "insert into member (id, password, name, gender, age, join_date) values (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
-            pstmt.setString(1, newM.getId());
-            pstmt.setString(2, newM.getPassword());
-            pstmt.setString(3, newM.getName());
-            pstmt.setString(4, newM.getGender());
-            pstmt.setInt(5, newM.getAge());
+            pstmt.setString(1, m.getId());
+            pstmt.setString(2, m.getPassword());
+            pstmt.setString(3, m.getName());
+            pstmt.setString(4, m.getGender());
+            pstmt.setInt(5, m.getAge());
+            pstmt.setDate(6, Date.valueOf(LocalDate.now()));
 
             res = pstmt.executeUpdate();
             conn.commit();

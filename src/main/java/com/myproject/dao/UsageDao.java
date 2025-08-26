@@ -3,10 +3,9 @@ package com.myproject.dao;
 import com.myproject.bean.Member;
 import com.myproject.bean.Usage;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class UsageDao extends SuperDao {
     public UsageDao() {
@@ -36,10 +35,10 @@ public class UsageDao extends SuperDao {
         double dp = 0;
 
         switch (plan) {
-            case "5G 프리미엄": dp = 25.00; break;
-            case "5G 스탠다드": dp = 10.00; break;
-            case "LTE 무제한": dp = 30.00; break;
-            case "LTE 라이트": dp = 5.00; break;
+            case "5G 프리미엄": dp = 30.00; break;
+            case "5G 스탠다드": dp = 18.00; break;
+            case "LTE 무제한": dp = 50.00; break;
+            case "LTE 라이트": dp = 9.00; break;
         }
         return dp;
     }
@@ -56,6 +55,21 @@ public class UsageDao extends SuperDao {
             case "LTE 라이트": ap = 33000; break;
         }
         return ap;
+    }
+
+    public String calcGrade(String loggedInId) {
+        MemberDao mdao = new MemberDao();
+        Member m = mdao.callById(loggedInId);
+        // 가입일로부터 오늘은 몇년지났는가
+        long yearsBetween = ChronoUnit.YEARS.between(m.getJoinDate(), LocalDate.now());
+
+        if (yearsBetween <= 2) {
+            return "normal";
+        } else if (yearsBetween <= 5) {
+            return "vip";
+        } else {
+            return "vvip";
+        }
     }
 
     public int calcAgeDiscount(String loggedInId) {
@@ -102,15 +116,16 @@ public class UsageDao extends SuperDao {
         int res = 0;
 
         String sql = "insert into usage (id, telecom, plan, used_data, grade, discount_rate, amount)" +
-                " values (?, ?, ?, 0.00, 'normal', ?, ?)";
+                " values (?, ?, ?, 0.00, ?, ?, ?)";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, u.getId());
             pstmt.setString(2, u.getTelecom());
             pstmt.setString(3, u.getPlan());
-            pstmt.setInt(6, calcDiscount(u.getId()));
-            pstmt.setInt(7, calcAmount(u.getId()));
+            pstmt.setString(4, this.calcGrade(u.getId()));
+            pstmt.setInt(5, this.calcDiscount(u.getId()));
+            pstmt.setInt(6, this.calcAmount(u.getId()));
 
             res = pstmt.executeUpdate();
             conn.commit();
