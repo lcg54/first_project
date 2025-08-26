@@ -4,9 +4,9 @@ public class Usage {
     private String id;
     private String telecom;
     private String plan;
-    private double usedData = 0.00;
-    private String grade = "normal";
-    private int discountRate = 0;
+    private double usedData;
+    private String grade;
+    private int discountRate;
     private int amount;
 
     @Override
