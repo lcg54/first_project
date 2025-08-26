@@ -57,21 +57,6 @@ public class UsageDao extends SuperDao {
         return ap;
     }
 
-    public String calcGrade(String loggedInId) {
-        MemberDao mdao = new MemberDao();
-        Member m = mdao.callById(loggedInId);
-        // 가입일로부터 오늘은 몇년지났는가
-        long yearsBetween = ChronoUnit.YEARS.between(m.getJoinDate(), LocalDate.now());
-
-        if (yearsBetween <= 2) {
-            return "normal";
-        } else if (yearsBetween <= 5) {
-            return "vip";
-        } else {
-            return "vvip";
-        }
-    }
-
     public int calcAgeDiscount(String loggedInId) {
         MemberDao mdao = new MemberDao();
         Member m = mdao.callById(loggedInId);
@@ -82,6 +67,21 @@ public class UsageDao extends SuperDao {
             ageDiscount = 30;
         }
         return ageDiscount;
+    }
+
+    public String calcGrade(String loggedInId) {
+        MemberDao mdao = new MemberDao();
+        Member m = mdao.callById(loggedInId);
+        // 가입일로부터 오늘은 몇 년 지났는가
+        long yearsBetween = ChronoUnit.YEARS.between(m.getJoinDate(), LocalDate.now());
+
+        if (yearsBetween <= 2) {
+            return "normal";
+        } else if (yearsBetween <= 5) {
+            return "vip";
+        } else {
+            return "vvip";
+        }
     }
 
     public int calcGradeDiscount(String loggedInId) {
@@ -159,24 +159,14 @@ public class UsageDao extends SuperDao {
 
     public int updatePlan(String loggedInId, String plan) {
         int res = 0;
-
-        String sql1 = "select * from usage where id = ? and plan = ?";
-        String sql2 = "update usage set plan = ? where id = ?";
+        String sql = "update usage set plan = ? where id = ?";
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
-            pstmt1.setString(1, loggedInId);
-            pstmt1.setString(2, plan);
-            ResultSet rs = pstmt1.executeQuery();
-
-            if (!rs.next()) {
-                try (PreparedStatement pstmt2 = conn.prepareStatement(sql2);) {
-                    pstmt2.setString(2, loggedInId);
-                    pstmt2.setString(1, plan);
-                    res = pstmt2.executeUpdate();
-                    conn.commit();
-                }
-            }
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, plan);
+            pstmt.setString(2, loggedInId);
+            res = pstmt.executeUpdate();
+            conn.commit();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -184,26 +174,16 @@ public class UsageDao extends SuperDao {
         return res;
     }
 
-    public int updateTelecom(String loggedInId, String tel) {
+    public int updateTel(String loggedInId, String tel) {
         int res = 0;
-
-        String sql1 = "select * from usage where id = ? and telecom = ?";
-        String sql2 = "update usage set telecom = ? where id = ?";
+        String sql = "update usage set telecom = ? where id = ?";
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt1 = conn.prepareStatement(sql1);) {
-            pstmt1.setString(1, loggedInId);
-            pstmt1.setString(2, tel);
-            ResultSet rs = pstmt1.executeQuery();
-
-            if (!rs.next()) {
-                try (PreparedStatement pstmt2 = conn.prepareStatement(sql2);) {
-                    pstmt2.setString(2, loggedInId);
-                    pstmt2.setString(1, tel);
-                    res = pstmt2.executeUpdate();
-                    conn.commit();
-                }
-            }
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, tel);
+            pstmt.setString(2, loggedInId);
+            res = pstmt.executeUpdate();
+            conn.commit();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

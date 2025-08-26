@@ -18,61 +18,61 @@ public class Manager {
         Member m = mdao.callById(id);
         if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
             System.out.println("입력 조건을 확인해주세요.");
-            return true;
+            return false;
         } else if (m == null) {
             System.out.println("존재하지 않는 아이디입니다.");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public boolean checkNewId(String id) {
         Member m = mdao.callById(id);
         if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
             System.out.println("입력 조건을 확인해주세요.");
-            return true;
+            return false;
         } else if (m != null) {
             System.out.println("이미 존재하는 아이디입니다.");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public boolean checkPw(String pw) {
         if (!pw.matches("^[a-zA-Z0-9]{7,15}$")) {
             System.out.println("입력 조건을 확인해주세요.");
-            return true;
+            return false;
         }
         if (!pw.matches(".*[a-zA-Z].*")) {
             System.out.println("비밀번호에 영문이 한 글자 이상 포함되어야 합니다.");
-            return true;
+            return false;
         }
         if (!pw.matches(".*[0-9].*")) {
             System.out.println("비밀번호에 숫자가 하나 이상 포함되어야 합니다.");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public boolean checkName(String name) {
         if (name.isBlank()) {
             System.out.println("이름은 반드시 입력해야 합니다.");
-            return true;
+            return false;
         } else if (name.length() > 10) {
             System.out.println("올바른 이름을 입력해주세요. (1~10자)");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public boolean checkGen(String gen) {
         switch (gen) {
             case "1", "m", "M", "male", "Male", "남", "남자", "남성",
                  "2", "f", "F", "female", "Female", "여", "여자", "여성" :
-                return false;
+                return true;
             default:
                 System.out.println("올바른 성별을 입력해주세요.");
-                return true;
+                return false;
         }
     }
 
@@ -81,16 +81,16 @@ public class Manager {
             int a = Integer.parseInt(age);
             if (a < 12) {
                 System.out.println("12세 미만은 가입이 불가능합니다.");
-                return true;
+                return false;
             } else if (a > 120) {
                 System.out.println("올바른 나이를 입력해주세요. (최대 120세)");
-                return true;
-            } else {
                 return false;
+            } else {
+                return true;
             }
         } catch (NumberFormatException e) {
             System.out.println("숫자로 입력해주세요.");
-            return true;
+            return false;
         }
     }
 
@@ -99,14 +99,14 @@ public class Manager {
             int a = Integer.parseInt(tel);
             switch (a) {
                 case 1, 2, 3:
-                    return false;
+                    return true;
                 default:
                     System.out.println("지정된 숫자 내에서 입력해주세요.");
-                    return true;
+                    return false;
             }
         } catch (NumberFormatException e) {
             System.out.println("숫자로 입력해주세요.");
-            return true;
+            return false;
         }
     }
 
@@ -115,14 +115,14 @@ public class Manager {
             int a = Integer.parseInt(plan);
             switch (a) {
                 case 1, 2, 3, 4:
-                    return false;
+                    return true;
                 default:
                     System.out.println("지정된 숫자 내에서 입력해주세요.");
-                    return true;
+                    return false;
             }
         } catch (NumberFormatException e) {
             System.out.println("숫자로 입력해주세요.");
-            return true;
+            return false;
         }
     }
 
@@ -207,7 +207,7 @@ public class Manager {
     }
 
     public boolean updateTel(String loggedInId, String tel) {
-        int res = udao.updateTelecom(loggedInId, tel);
+        int res = udao.updateTel(loggedInId, tel);
         if (res > 0) {
             System.out.println("통신사를 이동하였습니다.");
             return true;
