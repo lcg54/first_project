@@ -5,6 +5,9 @@ import com.myproject.bean.Usage;
 import com.myproject.dao.MemberDao;
 import com.myproject.dao.UsageDao;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 public class Manager {
     private MemberDao mdao = null;
     private UsageDao udao = null;
@@ -129,12 +132,22 @@ public class Manager {
 
 
     public boolean signUp(Member m, Usage u) {
-        if (mdao.signUp(m) > 0 && udao.signUp(u) > 0) {
-            System.out.println("\'" + m.getId() + "\' 님의 회원가입이 완료되었습니다.");
-            System.out.println("다시 로그인해주세요.");
+        // 입력받지 않은 컬럼의 기본값 set
+        m.setJoinDate(LocalDate.now());
+        if (mdao.signUp(m) > 0) {
+            // 먼저 insert 성공한 member 값을 토대로, usage도 마찬가지로 입력받지 않은 컬럼의 기본값 set
+            u.setGrade(udao.calcGrade(m.getJoinDate()));
+            u.setDiscountRate(udao.calcDiscount(m.getAge(), u.getGrade()));
+            u.setAmount(udao.calcAmount(u.getPlan(), u.getDiscountRate()));
+            if (udao.signUp(u) > 0) {
+                System.out.println("\'" + m.getId() + "\' 님의 회원가입이 완료되었습니다.");
+                System.out.println("다시 로그인해주세요.");
+            } else {
+                System.out.println("사용정보 등록에 실패하였습니다. 다시 시도해주세요.");
+            }
             return true;
         } else {
-            System.out.println("회원가입에 실패하였습니다. 다시 시도해 주세요.");
+            System.out.println("회원가입에 실패하였습니다. 다시 시도해주세요.");
             return false;
         }
     }
@@ -163,14 +176,12 @@ public class Manager {
         Usage u = udao.callById(loggedInId);
         switch (yesOrNo) {
             case "y", "Y":
-                System.out.println("요금제명 : " + u.getPlan());
-                System.out.println("데이터 제공량 : " + udao.dataOfPlan(loggedInId) + "GB");
-                System.out.println("데이터 사용량 : " + u.getUsedData() + "GB");
-                System.out.println("잔여 데이터 : " + (udao.dataOfPlan(loggedInId) - u.getUsedData()) + "GB");
-                System.out.println("할인율 : " + u.getDiscountRate() + "%");
-                System.out.println("청소년/노인 할인 : [" + m.getAge() + "]세 - " + udao.calcAgeDiscount(loggedInId) + "% + " +
-                        "멤버십 등급 할인 : [" + udao. calcGrade(loggedInId) + "] - " + udao.calcGradeDiscount(loggedInId) + "%)");
-                System.out.println("최종 납부할 금액 : " + udao.calcAmount(loggedInId) + "원");
+                System.out.println("요금제 : " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB" + " / " + u.getAmount() + "원"  );
+                System.out.println("데이터 사용량/잔여량 : " + u.getUsedData() + "GB / " + (udao.dataOfPlan(u.getPlan()) - u.getUsedData()) + "GB");
+                System.out.println("할인율 : " + u.getDiscountRate() + "%" +
+                        " (청소년/노인 할인 : [" + m.getAge() + "]세 - " + udao.calcAgeDiscount(m.getAge()) + "% + " +
+                        "멤버십 등급 할인 : [" + u.getGrade() + "] - " + udao.calcGradeDiscount(u.getGrade()) + "%)");
+                System.out.println("최종 납부하실 금액 : " + u.getAmount() + "원");
                 break;
             case "n", "N":
                 break;
@@ -194,11 +205,13 @@ public class Manager {
     }
 
     public boolean updatePlan(String loggedInId, String plan) {
+        Usage u = udao.callById(loggedInId);
         int res = udao.updatePlan(loggedInId, plan);
-        int amount = udao.calcAmount(loggedInId);
+        // 요금제 변경했으니 요금도 변경
+        u.setAmount(udao.calcAmount(plan, u.getDiscountRate()));
         if (res > 0) {
             System.out.println("요금제를 변경하였습니다.");
-            System.out.println("익월부터 " + amount + "원의 요금이 부과됩니다.");
+            System.out.println("익월부터 " + u.getAmount() + "원의 요금이 부과됩니다.");
             return true;
         } else {
             System.out.println("이미 해당 요금제를 사용중입니다.");

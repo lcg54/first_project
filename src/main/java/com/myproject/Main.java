@@ -273,7 +273,7 @@ public class Main {
         boolean check = false;
         while (!check) {
             System.out.println("가입할 통신사를 선택해주세요. (숫자 입력)");
-            System.out.print("[1: SK, 2: KT, 3: LG]");
+            System.out.println("[1: SK, 2: KT, 3: LG]");
             tel = scan.nextLine();
             check = mng.checkTel(tel);
         }

@@ -29,9 +29,7 @@ public class UsageDao extends SuperDao {
         return usage;
     }
 
-    public double dataOfPlan(String loggedInId) {
-        Usage u = this.callById(loggedInId);
-        String plan = u.getPlan();
+    public double dataOfPlan(String plan) {
         double dp = 0;
 
         switch (plan) {
@@ -43,9 +41,7 @@ public class UsageDao extends SuperDao {
         return dp;
     }
 
-    public int amountOfPlan(String loggedInId) {
-        Usage u = this.callById(loggedInId);
-        String plan = u.getPlan();
+    public int amountOfPlan(String plan) {
         int ap = 0;
 
         switch (plan) {
@@ -57,58 +53,50 @@ public class UsageDao extends SuperDao {
         return ap;
     }
 
-    public int calcAgeDiscount(String loggedInId) {
-        MemberDao mdao = new MemberDao();
-        Member m = mdao.callById(loggedInId);
-        int age = m.getAge();
-        int ageDiscount = 0;
+    public int calcAgeDiscount(int age) {
+        int ad = 0;
 
         if (age <= 19 || age >= 65) {
-            ageDiscount = 30;
+            ad = 30;
         }
-        return ageDiscount;
+        return ad;
     }
 
-    public String calcGrade(String loggedInId) {
-        MemberDao mdao = new MemberDao();
-        Member m = mdao.callById(loggedInId);
+    public String calcGrade(LocalDate joinDate) {
+        String grade = null;
         // 가입일로부터 오늘은 몇 년 지났는가
-        long yearsBetween = ChronoUnit.YEARS.between(m.getJoinDate(), LocalDate.now());
+        long yearsBetween = ChronoUnit.YEARS.between(joinDate, LocalDate.now());
 
         if (yearsBetween <= 2) {
-            return "normal";
+            grade = "normal";
         } else if (yearsBetween <= 5) {
-            return "vip";
+            grade = "vip";
         } else {
-            return "vvip";
+            grade = "vvip";
         }
+        return grade;
     }
 
-    public int calcGradeDiscount(String loggedInId) {
-        Usage u = this.callById(loggedInId);
-        String grade = u.getGrade();
-        int gradeDiscount = 0;
+    public int calcGradeDiscount(String grade) {
+        int gd = 0;
 
         switch (grade) {
-            case "normal": gradeDiscount = 0; break;
-            case "vip": gradeDiscount = 10; break;
-            case "vvip": gradeDiscount = 20; break;
+            case "normal": gd = 0; break;
+            case "vip": gd = 10; break;
+            case "vvip": gd = 20; break;
         }
-        return gradeDiscount;
+        return gd;
     }
 
-    public int calcDiscount(String loggedInId) {
-        int ageDiscount = calcAgeDiscount(loggedInId);
-        int gradeDiscount = calcGradeDiscount(loggedInId);
-        int discountRate = ageDiscount + gradeDiscount;
-        return discountRate;
+    public int calcDiscount(int age, String grade) {
+        int ageDiscount = calcAgeDiscount(age);
+        int gradeDiscount = calcGradeDiscount(grade);
+        return ageDiscount + gradeDiscount;
     }
 
-    public int calcAmount(String loggedInId) {
-        int base = amountOfPlan(loggedInId);
-        int discount = calcDiscount(loggedInId);
-        int amount = (int) (base * (1 - discount / 100.0));
-        return amount;
+    public int calcAmount(String plan, int discountRate) {
+        int base = amountOfPlan(plan);
+        return (int) (base * (1 - discountRate / 100.0));
     }
 
 
@@ -116,16 +104,16 @@ public class UsageDao extends SuperDao {
         int res = 0;
 
         String sql = "insert into usage (id, telecom, plan, used_data, grade, discount_rate, amount)" +
-                " values (?, ?, ?, 0.00, 'normal', 0, 0)";
+                " values (?, ?, ?, 0.00, ?, ?, ?)";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, u.getId());
             pstmt.setString(2, u.getTelecom());
             pstmt.setString(3, u.getPlan());
-//            pstmt.setString(4, this.calcGrade(u.getId()));
-//            pstmt.setInt(5, this.calcDiscount(u.getId()));
-//            pstmt.setInt(6, this.calcAmount(u.getId()));
+            pstmt.setString(4, u.getGrade());
+            pstmt.setInt(5, u.getDiscountRate());
+            pstmt.setInt(6, u.getAmount());
 
             res = pstmt.executeUpdate();
             conn.commit();
@@ -159,12 +147,16 @@ public class UsageDao extends SuperDao {
 
     public int updatePlan(String loggedInId, String plan) {
         int res = 0;
-        String sql = "update usage set plan = ? where id = ?";
+        Usage u = this.callById(loggedInId);
+
+        String sql = "update usage set plan = ?, amount = ? where id = ?";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, plan);
-            pstmt.setString(2, loggedInId);
+            // 요금제 변경 시 최종 납부액도 변경
+            pstmt.setInt(2, this.calcAmount(plan, u.getDiscountRate()));
+            pstmt.setString(3, loggedInId);
             res = pstmt.executeUpdate();
             conn.commit();
 

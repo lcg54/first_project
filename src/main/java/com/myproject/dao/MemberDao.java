@@ -5,11 +5,11 @@ import com.myproject.bean.Member;
 import java.sql.*;
 import java.time.LocalDate;
 
-public class MemberDao extends SuperDao{
+public class MemberDao extends SuperDao {
     public MemberDao() {
     }
 
-    private Member preMember(ResultSet rs){
+    private Member preMember(ResultSet rs) {
         Member member = null;
         try {
             member = new Member();
@@ -38,7 +38,7 @@ public class MemberDao extends SuperDao{
             pstmt.setString(3, m.getName());
             pstmt.setString(4, m.getGender());
             pstmt.setInt(5, m.getAge());
-            pstmt.setDate(6, Date.valueOf(LocalDate.now()));
+            pstmt.setDate(6, Date.valueOf(m.getJoinDate()));
 
             res = pstmt.executeUpdate();
             conn.commit();
@@ -55,11 +55,11 @@ public class MemberDao extends SuperDao{
         String sql = "select * from member where id = ? and password = ?";
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);){
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, id);
             pstmt.setString(2, pw); // 입력값 대입하고
 
-            try(ResultSet rs = pstmt.executeQuery();) { // 문장 실행해서
+            try (ResultSet rs = pstmt.executeQuery();) { // 문장 실행해서
                 if (rs.next()) { // 존재한다면
                     m = this.preMember(rs); // 저장 (리턴할거)
                 }
@@ -77,7 +77,7 @@ public class MemberDao extends SuperDao{
         String sql = "select * from member where id = ?";
 
         try (Connection conn = super.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);){
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, loggedInId);
 
             try (ResultSet rs = pstmt.executeQuery();) {
