@@ -14,18 +14,6 @@ public class Manager {
         this.udao = new UsageDao();
     }
 
-    public boolean checkId(String id) {
-        Member m = mdao.callById(id);
-        if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
-            System.out.println("입력 조건을 확인해주세요.");
-            return false;
-        } else if (m == null) {
-            System.out.println("존재하지 않는 아이디입니다.");
-            return false;
-        }
-        return true;
-    }
-
     public boolean checkNewId(String id) {
         Member m = mdao.callById(id);
         if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
@@ -33,6 +21,18 @@ public class Manager {
             return false;
         } else if (m != null) {
             System.out.println("이미 존재하는 아이디입니다.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean checkId(String id) {
+        Member m = mdao.callById(id);
+        if (!id.matches("^[a-zA-Z0-9]{3,6}$")) {
+            System.out.println("입력 조건을 확인해주세요.");
+            return false;
+        } else if (m == null) {
+            System.out.println("존재하지 않는 아이디입니다.");
             return false;
         }
         return true;
@@ -218,7 +218,8 @@ public class Manager {
     }
 
     public boolean deleteOne(String loggedInId, String outPw) {
-        if (mdao.deleteOne(loggedInId, outPw) > 0 && udao.deleteOne(loggedInId) > 0) {
+        if (mdao.deleteOne(loggedInId, outPw) > 0) {
+            udao.deleteOne(loggedInId);
             System.out.println(loggedInId + "님의 회원 탈퇴가 완료되었습니다.");
             System.out.println("로그인 화면으로 이동합니다.");
             return true;

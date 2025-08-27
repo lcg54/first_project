@@ -77,7 +77,7 @@ public class Main {
                                         while (!action) {
                                             System.out.println("세부 명세서를 조회하시겠습니까? (Y/N)");
                                             String yesOrNo = scan.nextLine();
-                                            // Y/N 이외의 값 입력 시 다시 묻기
+                                            // Y/N 이외의 값 입력 시 루프
                                             action = mng.showMyDetailInfo(yesOrNo, loggedInId);
                                         }
                                         break;
@@ -87,7 +87,7 @@ public class Main {
                                         while (!action) {
                                             System.out.print("변경할 ");
                                             String newPw = enterPw(scan, mng);
-                                            // 비밀번호 변경 성공 시 시작 루프로 이동(재로그인)
+                                            // 비밀번호 변경 성공 시 시작 루프로 이동 (재로그인)
                                             if (mng.updatePw(loggedInId, newPw)) {
                                                 main = false;
                                                 action = true;
@@ -138,10 +138,11 @@ public class Main {
                                         while (!action) {
                                             System.out.println("로그아웃 하시겠습니까? (Y/N)");
                                             String yesOrNo = scan.nextLine();
-                                            // Y/N 이외의 값 입력 시 다시 묻기
+                                            // Y/N 이외의 값 입력 시 루프
                                             switch (yesOrNo) {
                                                 case "y", "Y":
                                                     System.out.println("로그아웃 되었습니다.");
+                                                    loggedInId = null;
                                                     action = true;
                                                     break;
                                                 case "n", "N":

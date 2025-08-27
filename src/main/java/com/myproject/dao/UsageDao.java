@@ -35,10 +35,10 @@ public class UsageDao extends SuperDao {
         double dp = 0;
 
         switch (plan) {
-            case "5G 프리미엄": dp = 30.00; break;
-            case "5G 스탠다드": dp = 18.00; break;
-            case "LTE 무제한": dp = 50.00; break;
-            case "LTE 라이트": dp = 9.00; break;
+            case "5G 프리미엄": dp = 33.00; break;
+            case "5G 스탠다드": dp = 15.00; break;
+            case "LTE 무제한": dp = 30.00; break;
+            case "LTE 라이트": dp = 6.00; break;
         }
         return dp;
     }
