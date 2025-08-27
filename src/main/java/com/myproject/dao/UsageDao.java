@@ -116,16 +116,16 @@ public class UsageDao extends SuperDao {
         int res = 0;
 
         String sql = "insert into usage (id, telecom, plan, used_data, grade, discount_rate, amount)" +
-                " values (?, ?, ?, 0.00, ?, ?, ?)";
+                " values (?, ?, ?, 0.00, 'normal', 0, 0)";
 
         try (Connection conn = super.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, u.getId());
             pstmt.setString(2, u.getTelecom());
             pstmt.setString(3, u.getPlan());
-            pstmt.setString(4, this.calcGrade(u.getId()));
-            pstmt.setInt(5, this.calcDiscount(u.getId()));
-            pstmt.setInt(6, this.calcAmount(u.getId()));
+//            pstmt.setString(4, this.calcGrade(u.getId()));
+//            pstmt.setInt(5, this.calcDiscount(u.getId()));
+//            pstmt.setInt(6, this.calcAmount(u.getId()));
 
             res = pstmt.executeUpdate();
             conn.commit();

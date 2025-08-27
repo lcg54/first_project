@@ -31,8 +31,8 @@ public class Main {
                         boolean signUp = false;
                         while (!signUp) {
                             // 세터(입력메소드(+유효성검사메소드))
-                            m.setId(enterNewId(scan, mng));
-                            u.setId(enterNewId(scan, mng));
+                            String newId = enterNewId(scan, mng);
+                            m.setId(newId); u.setId(newId);
                             m.setPassword(enterPw(scan, mng));
                             m.setName(enterName(scan, mng));
                             m.setGender(enterGen(scan, mng));
