@@ -144,6 +144,7 @@ public class Main {
                                                 case "y", "Y":
                                                     System.out.println("로그아웃 되었습니다.");
                                                     loggedInId = null;
+                                                    main = false;
                                                     action = true;
                                                     break;
                                                 case "n", "N":
