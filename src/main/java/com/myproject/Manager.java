@@ -177,9 +177,10 @@ public class Manager {
         switch (yesOrNo) {
             case "y", "Y":
                 System.out.println("요금제 : " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB" + " / " + udao.amountOfPlan(u.getPlan()) + "원"  );
-                System.out.println("데이터 사용량/잔여량 : " + u.getUsedData() + "GB / " + (udao.dataOfPlan(u.getPlan()) - u.getUsedData()) + "GB");
+                System.out.println("데이터 사용량/잔여량 : " + u.getUsedData() + "GB / " +
+                        String.format("%.2f", (udao.dataOfPlan(u.getPlan()) - u.getUsedData())) + "GB");
                 System.out.println("할인율 : " + u.getDiscountRate() + "%" +
-                        " (청소년/노인 할인 : [" + m.getAge() + "]세 - " + udao.calcAgeDiscount(m.getAge()) + "% + " +
+                        " (청소년/노인 할인 : [" + m.getAge() + "세] - " + udao.calcAgeDiscount(m.getAge()) + "% + " +
                         "멤버십 등급 할인 : [" + u.getGrade() + "] - " + udao.calcGradeDiscount(u.getGrade()) + "%)");
                 System.out.println("최종 납부하실 금액 : " + u.getAmount() + "원");
                 break;
