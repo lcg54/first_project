@@ -127,6 +127,7 @@ public class Main {
                                             String rePw = enterPw(scan, mng);
                                             // 탈퇴 후 시작 루프로
                                             if (mng.deleteOne(loggedInId, rePw)) {
+                                                loggedInId = null;
                                                 main = false;
                                                 action = true;
                                             }
@@ -152,6 +153,7 @@ public class Main {
                                                     System.out.println("Y 또는 N을 입력해주세요.");
                                             }
                                         }
+                                        break;
 
                                     default:
                                         System.out.println("지정된 숫자 내에서 입력해주세요.");

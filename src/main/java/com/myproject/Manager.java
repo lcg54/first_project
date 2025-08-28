@@ -176,7 +176,7 @@ public class Manager {
         Usage u = udao.callById(loggedInId);
         switch (yesOrNo) {
             case "y", "Y":
-                System.out.println("요금제 : " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB" + " / " + u.getAmount() + "원"  );
+                System.out.println("요금제 : " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB" + " / " + udao.amountOfPlan(u.getPlan()) + "원"  );
                 System.out.println("데이터 사용량/잔여량 : " + u.getUsedData() + "GB / " + (udao.dataOfPlan(u.getPlan()) - u.getUsedData()) + "GB");
                 System.out.println("할인율 : " + u.getDiscountRate() + "%" +
                         " (청소년/노인 할인 : [" + m.getAge() + "]세 - " + udao.calcAgeDiscount(m.getAge()) + "% + " +
