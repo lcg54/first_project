@@ -144,6 +144,7 @@ public class Manager {
                 System.out.println("다시 로그인해주세요.");
             } else {
                 System.out.println("사용정보 등록에 실패하였습니다. 다시 시도해주세요.");
+                // 이게 뜰 일이 버그아니면 없을거같긴한데 혹시나 체크용
             }
             return true;
         } else {
@@ -159,6 +160,7 @@ public class Manager {
             return true;
         } else {
             System.out.println("아이디 또는 비밀번호가 일치하지 않습니다.");
+            // 지금 코딩에선 입력 실패를 무한대로 하면 탈출루트가 없어서 그대로 무한루프에 빠지는데, boolean이 아니라 int로 반환해서 일정 count 이상 실패하면 시작메뉴로 보내도록 짜면 좋을듯. 다음에.
             return false;
         }
     }
@@ -176,7 +178,8 @@ public class Manager {
         Usage u = udao.callById(loggedInId);
         switch (yesOrNo) {
             case "y", "Y":
-                System.out.println("요금제: " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB" + " / " + udao.amountOfPlan(u.getPlan()) + "원"  );
+                System.out.println("요금제: " + u.getPlan() + " / " + udao.dataOfPlan(u.getPlan()) + "GB / " +
+                        udao.amountOfPlan(u.getPlan()) + "원"  );
                 System.out.println("데이터 사용량 및 잔여량: " + u.getUsedData() + "GB / " +
                         String.format("%.2f", (udao.dataOfPlan(u.getPlan()) - u.getUsedData())) + "GB");
                 System.out.println("할인율: " + u.getDiscountRate() + "%" +
@@ -208,7 +211,7 @@ public class Manager {
     public boolean updatePlan(String loggedInId, String plan) {
         Usage u = udao.callById(loggedInId);
         int res = udao.updatePlan(loggedInId, plan);
-        // 요금제 변경했으니 요금도 변경
+        // 요금제 변경했으니 납부액도 변경
         u.setAmount(udao.calcAmount(plan, u.getDiscountRate()));
         if (res > 0) {
             System.out.println("요금제를 변경하였습니다.");
@@ -239,7 +242,7 @@ public class Manager {
                 return true;
             } else {
                 System.out.println("회원 정보 제거에 성공하였으나, 프로그램 오류로 통신 정보를 제거하지 못했습니다.");
-                // 근데 이럴 일은 없음. 이미 앞에서 쓴 아이디 넣는거라
+                // 근데 이럴 일은 없음. 이미 앞에서 쓴 아이디 넣는거라. 걍 체크용
             }
         } else {
             System.out.println("비밀번호가 일치하지 않습니다.");
