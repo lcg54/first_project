@@ -148,6 +148,8 @@ public class UsageDao extends SuperDao {
     public int updatePlan(String loggedInId, String plan) {
         int res = 0;
         Usage u = this.callById(loggedInId);
+        // 이미 쓰던 요금제라면
+        if (u.getPlan().equals(plan)) {return res;}
 
         String sql = "update usage set plan = ?, amount = ? where id = ?";
 
@@ -168,6 +170,9 @@ public class UsageDao extends SuperDao {
 
     public int updateTel(String loggedInId, String tel) {
         int res = 0;
+        Usage u = this.callById(loggedInId);
+        // 이미 쓰던 통신사라면
+        if (u.getTelecom().equals(tel)) {return res;}
         String sql = "update usage set telecom = ? where id = ?";
 
         try (Connection conn = super.getConnection();

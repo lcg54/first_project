@@ -233,13 +233,17 @@ public class Manager {
 
     public boolean deleteOne(String loggedInId, String outPw) {
         if (mdao.deleteOne(loggedInId, outPw) > 0) {
-            udao.deleteOne(loggedInId);
-            System.out.println(loggedInId + "님의 회원 탈퇴가 완료되었습니다.");
-            System.out.println("로그인 화면으로 이동합니다.");
-            return true;
+            if (udao.deleteOne(loggedInId) > 0) {
+                System.out.println(loggedInId + "님의 회원 탈퇴가 완료되었습니다.");
+                System.out.println("로그인 화면으로 이동합니다.");
+                return true;
+            } else {
+                System.out.println("회원 정보 제거에 성공하였으나, 프로그램 오류로 통신 정보를 제거하지 못했습니다.");
+                // 근데 이럴 일은 없음. 이미 앞에서 쓴 아이디 넣는거라
+            }
         } else {
-            System.out.println("회원 탈퇴에 실패하였습니다. 다시 시도해 주세요.");
-            return false;
+            System.out.println("비밀번호가 일치하지 않습니다.");
         }
+        return false;
     }
 }
